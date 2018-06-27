@@ -1,0 +1,136 @@
+<style lang="scss">
+  .picker-modal {
+    display: none;
+    
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    .modal-overlay {
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, .2);
+      transition: opacity 250ms ease;
+      opacity: 0;
+      
+      &.on {
+        opacity: 1;
+      }
+      &.out {
+        opacity: 0;
+      }
+    }
+    .modal-body {
+      position: fixed;
+      z-index: 10000;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-height: 90%;
+      background-color: #fff;
+      overflow-x: hidden;
+      overflow-y: auto;
+      transition: transform 250ms ease;
+      transform: translate3d(0, 100%, 0);
+      
+      &.on {
+        animation: com-picker-modal-in 250ms ease forwards;
+      }
+      
+      &.out {
+        animation: com-picker-modal-out 250ms ease forwards;
+      }
+    }
+    
+    &.on {
+      display: block;
+    }
+  }
+  
+  @keyframes com-picker-modal-in {
+    0% { transform: translate3d(0, 100%, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+  @keyframes com-picker-modal-out {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(0, 100%, 0); }
+  }
+</style>
+<template>
+  <view class="picker-modal {{show ? 'on' : ''}}">
+    <view class="modal-overlay {{on ? 'on' : ''}} {{out ? 'out' : ''}}" @tap="toggleModal()"></view>
+    <view class="modal-body {{on ? 'on' : ''}} {{out ? 'out' : ''}}">
+      <slot name="content"/>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class PickerModal extends wepy.component {
+    // components = {}
+    props = {
+      name: {
+        type: String,
+        default: ''
+      },
+      show: {
+        type: Boolean,
+        default: false
+      }
+    }
+
+    data = {
+      duration: 250,
+      on: false,
+      out: false
+    }
+
+    async toggleModal (flag) {
+      let show = (typeof flag === 'undefined') ? !this.show : flag
+
+      return new Promise((resolve, reject) => {
+        // Show instantly
+        if (show) {
+          this.on = true
+          this.out = false
+          this.show = true
+          this.$apply()
+          this.$emit('show', true)
+          return resolve()
+        } else { // Hide delayed
+          this.on = false
+          this.out = true
+          this.$apply()
+
+          setTimeout(() => {
+            this.show = false
+            this.$apply()
+            this.$emit('hide', true)
+            return resolve()
+          }, this.duration)
+        }
+      })
+    }
+
+    methods = {
+      toggleModal () {
+        return this.toggleModal()
+      }
+    }
+
+    events = {
+      toggleModal () {
+        return this.toggleModal()
+      }
+    }
+    // Other properties
+  }
+</script>

@@ -1,0 +1,26 @@
+@import "./basic/variables";
+@import "./basic/normalize";
+@import "./basic/mixins";
+@import "./layout";
+@import "./icons";
+@import "./button";
+@import "./components";
+@import "./utils";
+
+page {
+  color: $color-black;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: rpx(1) solid #E6E6E6;
+    transform: scaleY(.5);
+  }
+}
+
+

@@ -1,0 +1,15 @@
+{
+	"client": "./src",
+	"miniprogramRoot": "./dist",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "2.1.0",
+	"appid": "tourist",
+	"projectname": "weapp-native"
+}

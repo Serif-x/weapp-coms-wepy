@@ -1,0 +1,71 @@
+// Components
+// ====================================================
+
+@import "./basic/variables";
+@import "./basic/mixins";
+
+.checkbox {
+  height: rpx(30);
+  width: rpx(30);
+  line-height: rpx(30);
+  margin-right: rpx(20);
+  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  
+  @include with-border(#ccc);
+  
+  &::after {
+    content: '';
+    font-size: rpx(24);
+    font-weight: 100;
+    vertical-align: middle;
+  }
+  
+  &.checked {
+    background-color: $color-primary;
+    color: #fff;
+    
+    &::before {
+      border-color: $color-primary;
+    }
+    
+    &::after {
+      font-family: iconfont, sans-serif;
+      content: '\e6ce';
+    }
+  }
+}
+
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  
+  flex-grow: 0;
+  flex-shrink: 0;
+  
+  position: relative;
+  margin-right: rpx(10);
+  vertical-align: middle;
+  padding: rpx(8);
+  font-size: rpx(24);
+  line-height: 1;
+  color: $color-black;
+  text-align: center;
+  //border: rpx(1) solid $color-black;
+  //border-radius: rpx(2);
+  
+  @include with-border($color-black, rpx(2));
+  
+  &.badge-warning {
+    color: $color-warning;
+    @include with-border($color-warning, rpx(2));
+  }
+  &.badge-gray {
+    color: #fff;
+    @include with-border(#D8D8D8, rpx(2));
+    background-color: #D8D8D8;
+  }
+}

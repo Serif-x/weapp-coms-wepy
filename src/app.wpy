@@ -1,0 +1,46 @@
+<style lang="scss" src="./styles/index.scss"></style>
+<script>
+  import wepy from 'wepy'
+  import 'wepy-async-function'
+  import 'promise-polyfill'
+
+  export default class extends wepy.app {
+    config = {
+      window: {
+        backgroundTextStyle: 'dark',
+        navigationBarBackgroundColor: '#fff',
+        navigationBarTitleText: '晓月风尘',
+        navigationBarTextStyle: 'black'
+        // navigationStyle: 'custom'
+      },
+      pages: [
+        'pages/index'
+      ]
+    }
+
+    globalData = {
+      userInfo: null
+    }
+
+    constructor () {
+      super()
+      this.use('promisify')
+      this.use('requestfix')
+    }
+
+    onLaunch () {
+      //
+    }
+
+    async getUserInfo () {
+      const that = this
+      if (this.globalData.userInfo) {
+        return this.globalData.userInfo
+      }
+      return wepy.getUserInfo().then((res) => {
+        that.globalData.userInfo = res.userInfo
+        return res ? res.userInfo : null
+      })
+    }
+  }
+</script>

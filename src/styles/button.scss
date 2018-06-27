@@ -1,0 +1,20 @@
+// Button
+// ====================================================
+
+@import "./basic/mixins";
+
+.btn-plain {
+  display: inline-block;
+  line-height: inherit;
+  border: none;
+  padding: 0;
+  margin: 0;
+  vertical-align:middle;
+  border-radius:0;
+  background: none;
+  font-size: inherit;
+
+  &::after {
+    content: none;
+  }
+}

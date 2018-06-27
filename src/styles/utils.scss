@@ -1,0 +1,49 @@
+// Utils
+// ====================================================
+
+@import "./basic/mixins";
+@import "./basic/variables";
+
+.text-gray { color: $color-gray; }
+.text-warning { color: $color-warning; }
+
+.sub {
+  font-size: smaller;
+  vertical-align: sub;
+}
+.sup {
+  font-size: smaller;
+  vertical-align: top;
+}
+.small {
+  font-size: smaller;
+}
+
+.container-center-vertical {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.container-center-horizontal {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.with-line-top {
+  @include with-line-top();
+}
+.with-line-bottom {
+  @include with-line-bottom();
+}
+
+.block-gap {
+  @include block-gap();
+}
