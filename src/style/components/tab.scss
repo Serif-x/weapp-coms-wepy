@@ -1,0 +1,31 @@
+// Badge
+// ====================================================
+
+@import "../utils/variables";
+@import "../utils/mixins";
+
+.navbar-tab {
+  @include with-line-bottom();
+  
+  .navbar__item {
+    &::after {
+      content: '';
+      position: absolute;
+      z-index: 0;
+      bottom: rpx(15);
+      left: 50%;
+      width: rpx(40);
+      height: rpx(4);
+      margin-left: rpx(-20);
+      border-bottom: rpx(4) solid $color-primary;
+      transform: scaleX(0);
+      transition: transform .25s ease;
+    }
+    
+    &.active {
+      &::after {
+        transform: scaleX(1);
+      }
+    }
+  }
+}

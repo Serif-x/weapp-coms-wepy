@@ -1,0 +1,61 @@
+<style lang="scss">
+  @import "../style/utils/mixins";
+
+  :host {
+    @include borderBox();
+  }
+  
+  .com-loading-bar {
+    overflow: hidden;
+    
+    .bar-content {
+      padding: rpx(20);
+      text-align: center;
+      line-height: 1;
+      background-color: #f7f7f7;
+      font-size: rpx(28);
+      color: #ddd;
+      @include text-ellipsis();
+    }
+  }
+</style>
+<template>
+  <view class="com-loading-bar">
+    <view class="bar-content" wx:if="{{loading}}"><text>{{loadingText}}</text></view>
+    <view class="bar-content" wx:if="{{over}}"><text>{{overText}}</text></view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class LoadingBar extends wepy.component {
+    components = {}
+
+    props = {
+      loading: {
+        type: Boolean,
+        default: false
+      },
+      over: {
+        type: Boolean,
+        default: false
+      },
+      loadingText: {
+        type: String,
+        default: '加载中...'
+      },
+      overText: {
+        type: String,
+        default: '没有更多了'
+      }
+    }
+
+    data = {}
+
+    methods = {}
+
+    events = {}
+
+    // Other properties
+  }
+</script>

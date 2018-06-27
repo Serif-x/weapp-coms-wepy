@@ -1,0 +1,169 @@
+<style lang="scss">
+  @import "../style/utils/mixins";
+  
+  $lazyUrl: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNTIyNDE4NjgwMjMwIiBjbGFzcz0iaWNvbiIgc3R5bGU9IiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE4MzUiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNzgxLjQxNDQgNDQ5Ljk5NjhjLTQuMTk4NCAwLTguMzk2OCAwLTEyLjU5NTIgMC40MDk2YTk5LjUzMjggOTkuNTMyOCAwIDAgMC05NS44NDY0LTcyLjQ5OTJIMTg1LjE5MDRBOTkuNjM1MiA5OS42MzUyIDAgMCAwIDg2LjU3OTIgNDkxLjUybDU1LjU1MiAzOTUuNjczNkExMDAuMDQ0OCAxMDAuMDQ0OCAwIDAgMCAyNDAuNjQgOTcyLjhoMzc2LjgzMmExMDAuMDQ0OCAxMDAuMDQ0OCAwIDAgMCA5OC42NjI0LTg1Ljc2bDQuMTk4NC0yOS44NDk2YTIwOC4xNzkyIDIwOC4xNzkyIDAgMSAwIDYxLjA4MTYtNDA3LjE5MzZ6IG0tMTYzLjg0IDUwMy45MTA0SDI0MC42NGE4MS4wNDk2IDgxLjA0OTYgMCAwIDEtNzkuOTIzMi02OS40Nzg0TDEwNS4yNjcyIDQ4OC43NTUyYTgwLjY5MTIgODAuNjkxMiAwIDAgMSA3OS45MjMyLTkyLjE2aDQ4Ny44MzM2YTgwLjY5MTIgODAuNjkxMiAwIDAgMSA3OS45MjMyIDkyLjE2bC01NS41NTIgMzk1LjY3MzZhODEuMDQ5NiA4MS4wNDk2IDAgMCAxLTc5LjkyMzIgNjkuNDc4NHogbTE2My44NC0xMDYuNDQ0OGExODguODc2OCAxODguODc2OCAwIDAgMS01OC40NzA0LTkuMjE2TDc3MS42ODY0IDQ5MS41MmE5OS41MzI4IDk5LjUzMjggMCAwIDAgMC42MTQ0LTIyLjIyMDhoOS4xNjQ4YTE4OS40NCAxODkuNDQgMCAwIDEgMCAzNzguNTIxNnpNNDEyLjQxNiAyMjIuMTU2OEM0NDMuNjQ4IDIzMi4wODk2IDQ3Ni4xNiAyNDIuMzgwOCA0NzYuMTYgMjY0LjU1MDRjMCA0Ni4wOC01NS43MDU2IDU1LjA0LTU4LjA2MDggNTUuMzk4NGE3LjYyODggNy42Mjg4IDAgMCAwIDEuMTI2NCAxNS4zNmgxLjEyNjRjMjQuNTc2LTMuNzM3NiA3MS4wMTQ0LTIzLjI0NDggNzEuMDE0NC03MC40NTEyIDAtMzMuMzMxMi0zOS40MjQtNDYuMDgtNzQuMTM3Ni01Ni44ODMyLTI3LjAzMzYtOC42MDE2LTU0LjkzNzYtMTcuNDU5Mi01NC45Mzc2LTMzLjEyNjQgMC0zMS45NDg4IDYzLjU5MDQtNjAuNDE2IDg4LjExNTItNjguNzEwNGE3LjYyODggNy42Mjg4IDAgMCAwLTUuMTItMTQuNDM4NCAyOTkuMjY0IDI5OS4yNjQgMCAwIDAtNDguMDI1NiAyMS45MTM2Yy0zMy40ODQ4IDE5LjI1MTItNTAuNDgzMiAzOS44ODQ4LTUwLjQ4MzIgNjEuNDQgMC4wNTEyIDI2LjMxNjggMzMuMzgyNCAzNi44NjQgNjUuNjM4NCA0Ny4xMDR6IiBwLWlkPSIxODM2IiBmaWxsPSIjY2NjY2NjIj48L3BhdGg+PC9zdmc+);
+
+  :host {
+    @include borderBox();
+    
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    max-height: 100%;
+    width: rpx(320);
+    height: rpx(240);
+    overflow: hidden;
+  }
+  
+  .com-image {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    overflow: hidden;
+    vertical-align: top;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    
+    .lazy-cover {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: no-repeat scroll center center;
+      background-image: $lazyUrl;
+      background-size: 50% 50%;
+      transition: opacity 250ms ease;
+    }
+    
+    .img-el {
+      width: 100%;
+      height: 100%;
+      
+      &.lazy {
+        background: no-repeat scroll center center;
+        background-image: $lazyUrl;
+        background-size: 50% 50%;
+        transition: opacity 250ms ease;
+        opacity: 0;
+      }
+      
+      &.loaded {
+        opacity: 1;
+        background-image: none;
+      }
+
+      &.error {
+        opacity: 1;
+        transition: none;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="com-image">
+    <view wx:if="{{lazyLoad}}" class="{lazy-cover lazy}" hidden="{{loaded || error}}"></view>
+    <image src="{{src}}" lazy-load="{{lazyLoad}}" mode="{{mode}}"
+           :class="{'img-el': true, lazy: true, loaded: loaded, error: error}"
+           @load="setImgLoaded" @error="setImgError"></image>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class vImage extends wepy.component {
+    components = {}
+
+    props = {
+      src: {
+        type: String,
+        default: ''
+      },
+      errorSrc: {
+        type: String,
+        default: ''
+      },
+      lazyLoad: {
+        type: Boolean,
+        default: true
+      },
+      mode: {
+        type: String,
+        default: 'aspectFit'
+      }
+    }
+
+    data = {
+      loaded: false,
+      error: false,
+      details: null
+    }
+  
+    // computed = {
+    //   // imageStyle () {
+    //   //   if (!this.details) {
+    //   //     return {}
+    //   //   }
+    //   //   return [
+    //   //     `width: ${this.details.width}px`,
+    //   //     `height: ${this.details.height}px`
+    //   //   ].join(';')
+    //   // }
+    // }
+
+    methods = {
+      setImgLoaded (e) {
+        if (this.loaded) {
+          return
+        }
+        // console.log('Image load success')
+        setTimeout(() => {
+          this.setImgLoaded(this.src, e.detail)
+        }, 0)
+      },
+      setImgError () {
+        if (this.error) {
+          return
+        }
+        // console.warn('Image load error')
+        setTimeout(() => {
+          this.setImgError(this.src)
+        }, 0)
+      }
+    }
+  
+    /* region Methods */
+    setImgLoaded (url, details) {
+      this.loaded = true
+      this.error = false
+      if (details) {
+        this.details = details
+      }
+      this.$apply()
+      this.$wxpage.triggerEvent('loaded', {url})
+    }
+    setImgError (url) {
+      if (this.error) {
+        // Avoid infinite dead loop
+        return
+      }
+  
+      if (this.errorSrc) {
+        this.src = this.errorSrc
+      }
+  
+      this.loaded = false
+      this.error = true
+      this.$apply()
+      this.$wxpage.triggerEvent('error', {url})
+    }
+    /* endregion Methods */
+  }
+</script>

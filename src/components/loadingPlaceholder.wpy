@@ -1,0 +1,40 @@
+<style lang="scss">
+  @import "../style/utils/mixins";
+
+  :host {
+    @include borderBox();
+  }
+  
+  .com-loading-placeholder {
+    overflow: hidden;
+    padding: rpx(30);
+    @include flex-center();
+  }
+</style>
+<template>
+  <view class="com-loading-placeholder">
+    <image mode="aspectFit" lazy-load="{{false}}" src="/static/assets/img/loading-list.svg"></image>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class LoadingPlaceHolder extends wepy.component {
+    components = {}
+
+    props = {
+      loading: {
+        type: Boolean,
+        default: true
+      }
+    }
+
+    data = {}
+
+    methods = {}
+
+    events = {}
+
+    // Other properties
+  }
+</script>

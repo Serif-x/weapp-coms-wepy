@@ -1,0 +1,111 @@
+// Button
+// ====================================================
+
+@import "../utils/mixins";
+@import "../utils/variables";
+
+.btn {
+  height: rpx(94);
+  line-height: rpx(94);
+  border: none;
+  display: block;
+  padding: 0 rpx(20);
+  text-align: center;
+  font-size: rpx(36);
+  border-radius: rpx(6);
+  opacity: 0.95;
+  @include text-ellipsis();
+
+  &.btn-sm {
+    height: rpx(70);
+    line-height: rpx(70);
+    font-size: rpx(32);
+  }
+
+  &::after {
+    content: none;
+    border: none;
+  }
+
+  &.btn-block {
+    width: 100%;
+  }
+
+  &.btn-primary {
+    background-color: $color-primary;
+    color: #fff;
+
+    //&[disabled]:not([type]),
+    &.disabled {
+      background-color: $color-primary !important;
+      color: $color-black !important;
+    }
+  }
+
+  &.btn-white {
+    background-color: #fff;
+    color: $color-black;
+
+    @include with-border(#E6E6E6);
+
+    //&[disabled]:not([type]),
+    &.disabled {
+      background-color: #fff !important;
+      color: $color-black !important;
+    }
+  }
+  
+  &.btn-white-plain {
+    background-color: transparent;
+    color: #fff;
+    @include with-border(#fff);
+  
+    //&[disabled]:not([type]),
+    &.disabled {
+      background-color: rgba(255, 255, 255, .2) !important;
+      color: rgba(255, 255, 255, .8) !important;
+    }
+  }
+  
+  &.btn-sunset {
+    margin-bottom: rpx(6);
+    background-image: linear-gradient(-180deg, #ffe383 0%, #fdcb21 100%);
+    box-shadow: 0 rpx(6) 0 0 #ef9e09;
+    border-radius: rpx(40);
+    color: $color-primary;
+  }
+  
+  &.btn-sunset-plain {
+    border-radius: rpx(40);
+    background: none;
+    color: #fdcb21;
+    @include with-border(#FDCB21, rpx(2), rpx(80));
+  }
+
+  &.button-hover {
+    opacity: 1;
+  }
+
+  //&[disabled]:not([type]),
+  &.disabled {
+    opacity: 0.75 !important;
+  }
+}
+
+.btn-plain {
+  display: inline-block;
+  height: auto;
+  line-height: inherit;
+  border: none;
+  padding: 0;
+  margin: 0;
+  vertical-align:middle;
+  border-radius:0;
+  font-size: inherit;
+  background: none;
+  color: inherit;
+
+  &::after {
+    content: none;
+  }
+}

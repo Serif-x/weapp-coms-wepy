@@ -1,0 +1,67 @@
+<style lang="scss">
+  @import "../style/utils/mixins";
+  
+  :host {
+    @include borderBox();
+    display: block;
+  }
+
+  .com-spinner {
+    padding: rpx(30) 0;
+    width: rpx(160);
+    overflow: hidden;
+    margin: rpx(30) auto;
+    /*background-color: fade_out(#000, 0.8);*/
+    /*border-radius: rpx(10);*/
+  
+    .spinner-inner {
+      position: relative;
+      height: rpx(100);
+      width: rpx(100);
+      border-radius: 50%;
+      border: rpx(2) solid rgba(255,255,255, .7);
+      margin: 0 auto;
+    
+      transform-origin: 50% 50%;
+      animation: spinner 1s linear infinite;
+    
+      &::after {
+        content: "";
+        position: absolute;
+        top: rpx(-5);
+        left: rpx(42);
+        width: rpx(10);
+        height: rpx(10);
+        border-radius: 50%;
+        background-color: #fff;
+      }
+    
+      @keyframes spinner {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="com-spinner">
+    <view class="spinner-inner"></view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Spinner extends wepy.component {
+    components = {}
+
+    props = {}
+
+    data = {}
+
+    methods = {}
+
+    events = {}
+
+    // Other properties
+  }
+</script>

@@ -1,26 +1,104 @@
-<style lang="scss" src="./styles/index.scss"></style>
+<style lang="scss" src="style/index.scss"></style>
+
 <script>
   import wepy from 'wepy'
-  import 'wepy-async-function'
   import 'promise-polyfill'
+  import 'wepy-async-function'
+  import { shim } from 'promise.prototype.finally'
+  shim()
+  
+  import wxTip from './common/utils/wxTip'
+  import API, { sign as signAPI } from './api/api'
+
+  const checkSession = async () => {
+    return new Promise((resolve) => {
+      wx.checkSession({
+        success () {
+          console.info('Session is valid')
+          resolve(true)
+        },
+        fail () {
+          console.warn('Session is expires')
+          resolve(false)
+        }
+      })
+    })
+  }
+  
+  const getUserInfo = async function (vm) {
+    if (vm.globalData.userInfo) {
+      return vm.globalData.userInfo
+    }
+
+    return wepy.getUserInfo()
+      .then((res) => {
+        vm.globalData.userInfo = res.userInfo
+        console.info('User info: %o', res.userInfo)
+        return res.userInfo
+      })
+      .catch((res) => {
+        console.warn('Get user info error: %o', res)
+        return null
+      })
+  }
+  
+  const getAccountInfo = async function (vm, userInfo) {
+    const isSessionValid = await checkSession().catch(() => false)
+
+    if (isSessionValid) {
+      if (vm.globalData.accountInfo) {
+        return vm.globalData.accountInfo
+      }
+    }
+
+    const loginRes = await wepy.login().catch(() => null)
+
+    if (!loginRes) {
+      return null
+    }
+
+    const { code } = loginRes
+
+    if (!userInfo) {
+      userInfo = await getUserInfo(vm)
+    }
+
+    const accountInfo = await API.login({ code, userInfo })
+      .then(res => res.data)
+      .catch(() => null)
+
+    console.info(`Account info: %o`, accountInfo)
+
+    if (accountInfo) {
+      vm.globalData.accountInfo = accountInfo
+    }
+
+    return accountInfo
+  }
 
   export default class extends wepy.app {
     config = {
       window: {
         backgroundTextStyle: 'dark',
-        navigationBarBackgroundColor: '#fff',
-        navigationBarTitleText: '晓月风尘',
-        navigationBarTextStyle: 'black'
-        // navigationStyle: 'custom'
+        navigationBarBackgroundColor: '#D92A21',
+        navigationBarTitleText: '小程序基础设施',
+        navigationBarTextStyle: 'white'
+        // navigationStyle: 'custom',
       },
       pages: [
-        'pages/index'
-      ]
-    }
+        'pages/tabbar/pages/index',
+        'pages/tabbar/pages/cart',
+        'pages/tabbar/pages/category',
+        'pages/tabbar/pages/profile',
+        'pages/tabbar/pages/service'
+      ],
+      debug: true
+    };
 
     globalData = {
-      userInfo: null
-    }
+      userInfo: null,
+      accountInfo: null
+    };
 
     constructor () {
       super()
@@ -28,19 +106,95 @@
       this.use('requestfix')
     }
 
-    onLaunch () {
-      //
+    /* region Life cycle */
+    async onLaunch (option) {
+      // 获取账户信息
+      const accountInfo = await this.getAccountInfo()
+
+      // APP 初始化
+      this.appInit(accountInfo)
     }
 
-    async getUserInfo () {
-      const that = this
-      if (this.globalData.userInfo) {
-        return this.globalData.userInfo
-      }
-      return wepy.getUserInfo().then((res) => {
-        that.globalData.userInfo = res.userInfo
-        return res ? res.userInfo : null
-      })
+    async onShow (option) {
+      console.log(option)
     }
+
+    onError (res) {
+      console.error(res)
+    }
+    /* endregion Life cycle */
+
+    /* region Methods */
+
+    async appInit (accountInfo) {
+      // 关闭调试
+      wx.setEnableDebug({ enableDebug: false })
+
+      // 检查版本更新
+      if (wx.getUpdateManager) {
+        const updateManager = wx.getUpdateManager()
+        updateManager.onCheckForUpdate((res) => {
+          console.info(`Check update info: %o`, res)
+        })
+        updateManager.onUpdateReady(async () => {
+          const confirm = await wxTip.confirm('新版本来啦！多处功能优化，体验更舒适，服务更稳定，马上重启应用体验吧！', {
+            title: '版本更新',
+            confirmText: '立即体验',
+            cancelText: '稍后再说'
+          }).catch(() => false)
+
+          if (confirm) {
+            updateManager.applyUpdate()
+          }
+        })
+        updateManager.onUpdateFailed(() => {
+          // 新的版本下载失败
+          wxTip.info('新版本下载失败，稍后重试')
+        })
+      }
+
+      // 监测网络状态
+      if (wx.onNetworkStatusChange) {
+        wx.onNetworkStatusChange(res => {
+          if (res.isConnected) {
+            wxTip.info('网络连接正常')
+          } else {
+            wxTip.warn('网络连接异常，请检查')
+          }
+        })
+      }
+    }
+
+    /* region 账户信息 */
+    async getUserInfo () {
+      return getUserInfo(this)
+    }
+  
+    async getAccountInfo ({userInfo, retry = false} = {}) {
+      const isSessionValid = await checkSession().catch(() => false)
+  
+      if (isSessionValid && this._getAccountInfoPromise && !retry) {
+        return this._getAccountInfoPromise
+      }
+  
+      this._getAccountInfoPromise = getAccountInfo(this, userInfo)
+        .then(async (accountInfo) => {
+          if (!accountInfo) {
+            return null
+          }
+  
+          const userId = accountInfo.UserId
+  
+          // Sign API request
+          signAPI({ userId })
+  
+          return accountInfo
+        })
+  
+      return this._getAccountInfoPromise
+    }
+    /* endregion 账户信息 */
+  
+    /* endregion Methods */
   }
 </script>

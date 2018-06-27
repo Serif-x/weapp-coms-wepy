@@ -1,9 +1,11 @@
 <style lang="scss">
 
 </style>
+
 <template>
   <view>Hello world!</view>
 </template>
+
 <script>
   import wepy from 'wepy'
 

@@ -1,0 +1,102 @@
+// Badge
+// ====================================================
+
+//@import "../utils/variables";
+//@import "../utils/mixins";
+
+.navbar__area {
+  position: relative;
+  height: auto;
+  width: 100%;
+}
+.navbar__view {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
+.navbar {
+  position: relative;
+  width: 100%;
+  
+  .navbar__box {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    /*overflow: hidden;*/
+  }
+  .navbar__box__scroll {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .navbar__item {
+    position: relative;
+    
+    flex-grow: 1;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    
+    padding: rpx(15) rpx(15);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: 0;
+      left: 0;
+      top: 50%;
+      width: 0;
+      height: rpx(20);
+      margin-top: rpx(-10);
+      border-left: rpx(1) solid #e6e6e6;
+      transform: scaleX(0.5);
+    }
+    
+    &:first-child {
+      &::before {
+        content: none;
+      }
+    }
+    
+    &.active {
+    
+    }
+  }
+  .navbar__link {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: rpx(20) 0;
+    line-height: 1;
+    font-size: rpx(28);
+    background-color: transparent;
+    border-radius: 0;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: visible;
+    
+    &::after {
+      content: none;
+    }
+  }
+  .navbar__badge {
+    position: absolute;
+    right: 0;
+    top: rpx(10);
+    z-index: 9;
+    margin: 0;
+  }
+}

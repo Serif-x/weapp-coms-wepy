@@ -1,0 +1,41 @@
+// Badge
+// ====================================================
+
+//@import "../utils/variables";
+//@import "../utils/mixins";
+
+.floor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  
+  flex-grow: 1;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.floor-cell {
+  width: 100%;
+  position: relative;
+}
+.floor-cell_auto {
+  //height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.floor-cell_fixed {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.floor-cell_scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}

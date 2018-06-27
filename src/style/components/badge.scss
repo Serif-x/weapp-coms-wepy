@@ -1,0 +1,77 @@
+// Badge
+// ====================================================
+
+@import "../utils/variables";
+@import "../utils/mixins";
+
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  position: relative;
+  margin-right: rpx(10);
+  vertical-align: middle;
+  padding: rpx(8);
+  font-size: rpx(24);
+  line-height: 1;
+  color: $color-black;
+  text-align: center;
+  //border: rpx(1) solid $color-black;
+  //border-radius: rpx(2);
+
+  @include with-border($color-black, rpx(2));
+
+  &.badge-warning {
+    color: $color-warning;
+    @include with-border($color-warning, rpx(2));
+  }
+  &.badge-gray {
+    color: #fff;
+    @include with-border(#D8D8D8, rpx(2));
+    background-color: #D8D8D8;
+  }
+
+  &.badge-tip {
+    min-width: rpx(30);
+    height: rpx(30);
+    line-height: rpx(30);
+    padding: 0 rpx(3);
+    background-color: $color-warning;
+    letter-spacing: 0;
+    white-space: nowrap;
+    font-size: rpx(16);
+    color: #fff;
+    border: 0;
+    border-radius: 50%;
+    transform-origin: left bottom;
+
+    @include with-no-line-top();
+
+    animation: badge-tip-in 150ms ease forwards;
+
+    &::after {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      left: 0;
+      bottom: 0;
+      width: rpx(14);
+      height: rpx(14);
+      background-color: $color-warning;
+    }
+  }
+
+  @keyframes badge-tip-in {
+    0% {
+      transform: translate3d(0,0,0) scale(0)
+    }
+    100% {
+      transform: translate3d(0,0,0) scale(1)
+    }
+  }
+}
+

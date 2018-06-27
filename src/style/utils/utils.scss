@@ -1,0 +1,86 @@
+// Utils
+// ====================================================
+
+@import "variables";
+@import "mixins";
+
+/* region Layout */
+.inline {
+  display: inline !important;
+}
+.block {
+  display: block !important;
+  width: 100%;
+}
+.flex-center {
+  @include flex-center()
+}
+.box-center-vertical {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+.box-center-horizontal {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.wrap-inner {
+  height: 100%;
+  width: 100%;
+}
+
+.block-gap {
+  @include block-gap();
+}
+/* endregion Layout */
+
+/* region Elements */
+.sub {
+  font-size: smaller;
+  vertical-align: middle;
+}
+.sup {
+  font-size: smaller;
+  vertical-align: top;
+}
+.small {
+  font-size: smaller;
+}
+.strong,
+.b {
+  font-weight: bold;
+}
+.large {
+  font-size: large;
+}
+.larger {
+  font-size: larger;
+}
+/* endregion Elements */
+
+/* region Text */
+.text-default { color: $color-black !important; }
+.text-gray { color: $color-gray !important; }
+.text-warning { color: $color-warning !important; }
+/* endregion Text */
+
+/* region Border */
+.with-line-top { @include with-line-top(); }
+.with-line-bottom { @include with-line-bottom(); }
+.with-no-border { @include with-no-border(); }
+.with-no-line-top { @include with-no-line-top(); }
+.with-no-line-bottom { @include with-no-line-bottom(); }
+/* endregion Border */
+
+
+
+

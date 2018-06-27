@@ -1,0 +1,139 @@
+// Badge
+// ====================================================
+
+@import "../utils/variables";
+@import "../utils/mixins";
+
+.list {
+  position: relative;
+  //margin-top: rpx(20);
+  //margin-bottom: rpx(20);
+  background-color: #fff;
+  
+  @include with-line-top();
+  @include with-line-bottom();
+}
+
+.list-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  
+  width: 100%;
+  position: relative;
+  padding: rpx(30) rpx(20);
+  transition: transform .25s ease;
+  transform: translate3d(0, 0, 0);
+  
+  @include with-line-bottom(rpx(20));
+  
+  &.active {
+    background-color: #eee;
+  }
+  
+  &.on {
+    transition: transform .25s ease;
+    transform: translate3d(rpx(-160), 0, 0);
+  }
+}
+.list-row-thin {
+  padding-top: rpx(15);
+  padding-bottom: rpx(15);
+}
+.list-row--hover {
+  background-color: #fefefe;
+}
+
+.list-cell {
+  flex-grow: 0;
+  flex-shrink: 1;
+  
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  
+  overflow: hidden;
+  position: relative;
+  font-size: rpx(28);
+  
+  &.cell_hd {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  &.cell_bd {
+    flex-grow: 1;
+    flex-shrink: 1;
+    /*flex-wrap: wrap;*/
+    word-break: break-all;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  &.cell_ft {
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: right;
+  }
+  &.cell_vertical {
+    flex-direction: column;
+  }
+  &.cell-swipe {
+    position: absolute;
+    z-index: 9;
+    right: rpx(-160);
+    top: 0;
+    height: 100%;
+    overflow: hidden;
+    transition: right .25s ease;
+    
+    .swipe-wrap {
+      height: 100%;
+      transition: transform .25s ease;
+      /*transform: translate3d(rpx(160), 0, 0);*/
+    }
+    
+    .btn-delete {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: rpx(160);
+      height: 100%;
+      //min-height: rpx(220);
+      background: $color-warning;
+      border-radius: 0;
+      font-size: rpx(28);
+      color: #fefdff;
+      
+      &::after {
+        content: none;
+      }
+    }
+    
+    &.on {
+      /*right: 0;*/
+      
+      .swipe-wrap {
+        /*transform: translate3d(0, 0, 0);*/
+      }
+    }
+  }
+  
+  .cell__icon {
+    display: inline-block;
+    padding-left: rpx(20);
+    color: #B3B3B3;
+  }
+}
+
+
+.list-no-outline {
+  @include with-no-border();
+  
+  .list-row:last-child {
+    @include with-no-line-bottom();
+  }
+}
+
+

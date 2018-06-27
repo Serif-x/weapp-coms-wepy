@@ -1,0 +1,115 @@
+<style lang="scss">
+  /*@import "./../style/basic/variables";*/
+  @import "../style/utils/mixins";
+
+  :host {
+    @include borderBox();
+    display: block;
+  }
+  
+  .com-auth-button {
+    height: 100%;
+    width: 100%;
+    
+    .auth-btn {
+      @include with-no-border();
+      @include flex-center();
+      @include text-ellipsis();
+      
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      line-height: 1;
+      font-size: inherit;
+      font-family: inherit;
+      background: transparent;
+      border-radius: 0;
+      color: inherit;
+  
+      &.disabled {
+        pointer-events: none;
+        background-color: transparent;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="com-auth-button {{ disabled ? 'disabled' : '' }}">
+    <button
+      class="auth-btn {{ disabled ? 'disabled' : '' }}"
+      open-type="getUserInfo"
+      hover-class="none"
+      @getuserinfo="getUserInfo"
+    >
+      <slot></slot>
+    </button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import wxAPI from '../common/utils/wxAPI'
+  import wxTip from '../common/utils/wxTip'
+  import API from '../api/api'
+
+  export default class AuthButton extends wepy.component {
+    props = {
+      disabled: {
+        type: Boolean,
+        default: false
+      }
+    }
+
+    data = {}
+
+    ready () {
+      //
+    }
+
+    methods = {
+      async getUserInfo (e) {
+        const res = e.detail || {}
+        console.info('Get userInfo: %o', res)
+
+        const userInfo = res.userInfo
+
+        if (userInfo) {
+          // 是否已经存在用户授权信息
+          const $app = wxAPI.getApp(this)
+          const hasUserInfo = $app.globalData && $app.globalData.userInfo
+  
+          // 没有则更新账户信息
+          if (!hasUserInfo) {
+            // 全局保存用户信息
+            if ($app.globalData) {
+              $app.globalData.userInfo = userInfo
+            }
+  
+            const accountInfo = await $app.getAccountInfo()
+            if (accountInfo) {
+              this.updateUserWxInfo({
+                userId: accountInfo.UserId,
+                userInfo: userInfo
+              })
+                .catch((res) => {
+                  console.log('Update user Wx info error: %o', res.msg)
+                  return false
+                })
+            }
+          }
+        } else {
+          wxTip.info('为了更佳的服务体验，请同意授权')
+        }
+
+        this.$wxpage.triggerEvent('getUserInfo', res)
+      }
+    }
+
+    updateUserWxInfo ({userId = 0, userInfo = {}} = {}, {showLoading = true} = {}) {
+      return API.updateAccountWxInfo({ userId, ...userInfo }, {showLoading})
+        .then(res => res.data)
+    }
+  }
+</script>

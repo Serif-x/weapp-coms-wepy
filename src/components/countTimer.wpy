@@ -1,0 +1,412 @@
+<style lang="scss">
+  @import "../style/utils/mixins";
+
+  :host {
+    @include borderBox();
+    display: inline-block;
+    vertical-align: middle;
+    line-height: inherit;
+  }
+
+  .com-count-timer {
+    text-align: center;
+    overflow: hidden;
+
+    .count-wrap {
+
+    }
+
+    .count-plain {
+      .timer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+
+        &::before,
+        &::after {
+          content: '';
+          /*width: 0;*/
+          flex-shrink: 1;
+          flex-grow: 0;
+        }
+      }
+
+      .tick,
+      .dot,
+      .timeout {
+        flex-grow: 0;
+        flex-shrink: 0;
+        display: inline-block;
+        width: 0.6em;
+        letter-spacing: 0;
+        vertical-align: middle;
+        padding: 0;
+        margin: 0;
+        text-align: center;
+        font-size: inherit;
+        /*font-family: monospace;*/
+        line-height: inherit;
+        background: none;
+      }
+
+      .dot {
+        width: 0.5em;
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="com-count-timer">
+    <view class="count-wrap count-{{theme}}">
+      <view class="timer">
+        <block wx:if="{{offset.hours.length === 2}}">
+          <text class="tick">{{offset.hours[0]}}</text>
+          <text class="tick">{{offset.hours[1]}}</text>
+        </block>
+        <block wx:else>
+          <text
+            wx:for="{{offset.hours}}" wx:for-item="item" wx:key="*this"
+            class="tick"
+          >{{ item }}</text>
+        </block>
+
+        <text class="dot">:</text>
+        <text class="tick">{{offset.minutes[0]}}</text>
+        <text class="tick">{{offset.minutes[1]}}</text>
+
+        <text class="dot">:</text>
+
+        <text class="tick">{{offset.seconds[0]}}</text>
+        <text class="tick">{{offset.seconds[1]}}</text>
+
+        <block wx:if="{{showMs}}">
+          <text class="dot">.</text>
+          <text class="tick">{{offset.ms}}</text>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Timer from '../common/utils/timer'
+  import wxAPI from '../common/utils/wxAPI'
+
+  const floor = Math.floor
+
+  /**
+   * Get time object
+   * @param {Date|String|Number} [date]
+   * @returns {*}
+   */
+  const getTime = (date) => {
+    if (!date) {
+      return new Date()
+    }
+
+    if (date instanceof Date) {
+      return date
+    }
+
+    return new Date(date)
+  }
+
+  const getOffsetTime = (start, end) => {
+    return (end - start) || 0
+  }
+
+  const padLeftZero = (str) => {
+    return '00'.substr(0, 2 - str.length) + str
+  }
+
+  const getOffsetObj = (timeSpan) => {
+    const obj = {
+      hours: '00',
+      minutes: '00',
+      seconds: '00',
+      ms: '0'
+    }
+
+    if (typeof timeSpan !== 'number' || timeSpan <= 0) {
+      return obj
+    }
+
+    const hours = floor(timeSpan / 3600000)
+    const minutes = floor(timeSpan / 60000 - hours * 60)
+    const seconds = floor(timeSpan / 1000 - hours * 3600 - minutes * 60)
+    const ms = floor(timeSpan - hours * 3600000 - minutes * 60000 - seconds * 1000)
+
+    obj.hours = padLeftZero(hours.toString())
+    obj.minutes = padLeftZero(minutes.toString())
+    obj.seconds = padLeftZero(seconds.toString())
+    obj.ms = floor(ms / 100).toString()
+
+    return obj
+  }
+
+  const THEME = {
+    // box: 'box',
+    plain: 'plain'
+  }
+
+  const attachNativeEvent = (vm, eventName, handler) => {
+    const $page = wxAPI.getPage(vm)
+
+    if (!$page) {
+      console.warn('Attach native event error: page is null')
+      return
+    }
+
+    const wxPage = $page.$wxpage
+    const oldEvent = wxPage[eventName]
+
+    if (typeof handler !== 'function') {
+      handler = function () {}
+    }
+
+    wxPage[eventName] = () => {
+      if (typeof oldEvent === 'function') {
+        oldEvent.call(wxPage)
+      }
+
+      handler.call(vm)
+    }
+  }
+
+  export default class CountTimer extends wepy.component {
+    props = {
+      start: {
+        type: [Date, String, Number],
+        default: 0
+      },
+      end: {
+        type: [Date, String, Number],
+        default: 0
+      },
+      showMs: {
+        type: Boolean,
+        default: false
+      },
+      timerName: {
+        type: String,
+        default: ''
+      },
+      theme: {
+        type: String,
+        default: THEME.plain
+      }
+    }
+
+    data = {
+      initialized: false,
+
+      currentTime: 0,
+      targetTime: 0, // 阶段目标
+      startTime: 0,
+      endTime: 0,
+
+      offset: getOffsetObj(0),
+
+      timer: null,
+
+      isTimeout: false,
+
+      THEME
+    }
+
+    watch = {
+      start () {
+        this.setRange(this.end, this.start)
+        this.restartTimer()
+      },
+      end () {
+        this.setRange(this.end, this.start)
+        this.restartTimer()
+      }
+    }
+
+    methods = {
+      start () {
+        this.startTimer()
+      },
+
+      stop () {
+        this.stopTimer()
+      },
+
+      restart () {
+        this.restartTimer()
+      }
+    }
+
+    created () {
+      console.info('Count timer created')
+    }
+
+    ready () {
+      this.init()
+      this.startTimer()
+    }
+
+    attached () {
+      console.info('Count timer attached')
+    }
+
+    detached () {
+      console.warn('Count timer detached')
+      this.stopTimer()
+    }
+
+    /* region Methods */
+    setRange (end, start) {
+      const vm = this
+
+      vm.startTime = start ? getTime(start) : null
+      vm.endTime = end ? getTime(end) : null
+      vm.currentTime = getTime()
+
+      if (vm.currentTime < vm.startTime) {
+        vm.targetTime = vm.startTime
+      } else if (vm.currentTime < vm.endTime) {
+        vm.targetTime = vm.endTime
+      } else {
+        this.targetTime = vm.currentTime
+      }
+
+      // Initial offset
+      const offsetTime = getOffsetTime(vm.currentTime, vm.targetTime)
+      vm.offset = getOffsetObj(offsetTime)
+
+      // vm.$apply()
+      vm.setData({ offset: vm.offset })
+
+      console.info('Count timer info: %o', {
+        stringStart: start,
+        stringEnd: end,
+        start: vm.startTime,
+        end: vm.endTime,
+        current: vm.currentTime,
+        offset: vm.offset
+      })
+    }
+
+    init () {
+      const vm = this
+
+      if (vm.initialized) {
+        console.warn('Count timer is already initialized')
+        return
+      }
+
+      this.setRange(vm.end, vm.start)
+
+      const tickDelay = vm.showMs ? 100 : 1000
+
+      vm.timer = new Timer({
+        name: vm.timerName || 'CountTimer',
+
+        delay: tickDelay,
+
+        onBeforeStart () {
+          vm.currentTime = getTime()
+
+          // this -> timer
+          this.tickTimes = vm.getCountDown(vm.currentTime, vm.targetTime, vm.showMs)
+          this.currentTick = this.tickTimes
+          // vm.$apply()
+
+          vm.$wxpage.triggerEvent('start', {timer: vm.timer})
+        },
+
+        onProcess () {
+          vm.currentTime = getTime()
+          // vm.offset = getOffsetObj(getOffsetTime(vm.currentTime, vm.targetTime))
+
+          vm.setData({ offset: getOffsetObj(getOffsetTime(vm.currentTime, vm.targetTime)) })
+        },
+
+        onTimeout () {
+          if (!vm) return
+          if (vm.isTimeout) return
+
+          if (vm.targetTime !== vm.endTime && vm.currentTime < vm.endTime) {
+            vm.targetTime = vm.endTime
+            vm.timer.start()
+            vm.$wxpage.triggerEvent('ontime', {timer: vm.timer})
+            return
+          }
+
+          vm.onTimeout()
+        }
+      })
+
+      attachNativeEvent(vm, 'onUnload', () => {
+        console.warn('Count timer detached')
+        vm.stopTimer()
+      })
+      attachNativeEvent(vm, 'onHide', () => {
+        console.warn('Count timer detached')
+        vm.stopTimer()
+      })
+      attachNativeEvent(vm, 'onShow', () => {
+        console.warn('Count timer restarted')
+        vm.restartTimer()
+      })
+
+      vm.initialized = true
+      this.$wxpage.triggerEvent('init', {timer: vm.timer})
+      console.info('Count timer initialized success')
+    }
+
+    getCountDown (start, end, byMs = false) {
+      const unit = byMs ? 100 : 1000
+      return floor(getOffsetTime(start, end) / unit)
+    }
+
+    onTimeout () {
+      this.isTimeout = true
+
+      // this.$apply()
+      this.setData({ isTimeout: true })
+
+      this.$wxpage.triggerEvent('timeout', {timer: this.timer})
+    }
+
+    startTimer () {
+      if (this.timer) {
+        this.timer.start()
+        this.$wxpage.triggerEvent('start', {timer: this.timer})
+      }
+    }
+
+    stopTimer () {
+      if (this.timer) {
+        this.timer.stop()
+        this.$wxpage.triggerEvent('stop', {timer: this.timer})
+      }
+    }
+
+    restartTimer () {
+      if (this.timer) {
+        this.timer.restart()
+        this.$wxpage.triggerEvent('restart', {timer: this.timer})
+      }
+    }
+    /* endregion Methods */
+
+    /* region Events */
+    events = {
+      'countTimer-stop' (name) {
+        console.warn('Count timer received event: stop')
+        if (!name || name === this.timerName) {
+          this.stopTimer()
+        }
+      }
+    }
+    /* endregion Events */
+  }
+</script>

@@ -1,0 +1,60 @@
+// Layout
+// ====================================================
+
+@import "../utils/variables";
+@import "../utils/mixins";
+
+.page {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.place-empty {
+  //height: 100%;
+  padding: rpx(30) 0;
+  text-align: center;
+
+  .place-icon {
+    display: block;
+    font-size: rpx(300);
+    line-height: 1;
+    color: #D9D9D9;
+  }
+  .place-text {
+    display: block;
+    margin: rpx(30) rpx(30) 0;
+    font-size: rpx(32);
+    color: #999;
+  }
+}
+
+.page-action {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  margin-top: rpx(50);
+  position: relative;
+  width: 100%;
+  padding: rpx(20);
+  font-size: rpx(28);
+  text-align: center;
+
+  .page-btn {
+    margin: rpx(10) 0;
+  }
+}
+.page-action_bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  
+  @include with-line-top(rpx(20));
+}
+
+

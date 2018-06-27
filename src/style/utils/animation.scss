@@ -1,0 +1,18 @@
+// Utils
+// ====================================================
+
+@import "keyframes";
+
+.fade-in { animation: fade-in 500ms ease forwards; }
+.fade-in-Up { animation: fade-in-Up 500ms ease forwards; }
+.fade-in-down { animation: fade-in-down 500ms ease forwards; }
+.fade-in-out-up { animation: fade-in-out-up 500ms ease forwards; }
+.zoom-in-out { transition: transform 500ms; animation: zoom-in-out 1s linear infinite; }
+
+.fade-out { animation: fade-out 500ms ease forwards; }
+
+.heart-beat { transition: transform 500ms; animation: heart-beat 1s ease infinite; }
+
+
+
+
