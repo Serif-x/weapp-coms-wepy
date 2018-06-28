@@ -75,32 +75,33 @@
 
         const userInfo = res.userInfo
 
-        if (userInfo) {
-          // 是否已经存在用户授权信息
-          const $app = wxAPI.getApp(this)
-          const hasUserInfo = $app.globalData && $app.globalData.userInfo
-  
-          // 没有则更新账户信息
-          if (!hasUserInfo) {
-            // 全局保存用户信息
-            if ($app.globalData) {
-              $app.globalData.userInfo = userInfo
-            }
-  
-            const accountInfo = await $app.getAccountInfo()
-            if (accountInfo) {
-              this.updateUserWxInfo({
-                userId: accountInfo.UserId,
-                userInfo: userInfo
-              })
-                .catch((res) => {
-                  console.log('Update user Wx info error: %o', res.msg)
-                  return false
-                })
-            }
-          }
-        } else {
+        if (!userInfo) {
           wxTip.info('为了更佳的服务体验，请同意授权')
+          this.$wxpage.triggerEvent('getUserInfo', res)
+          return
+        }
+  
+        // 是否已经存在用户授权信息
+        const $app = wxAPI.getApp(this)
+        const currentUserInfo = await $app.getUserInfo()
+  
+        // 没有则更新账户信息
+        if (!currentUserInfo) {
+          // 全局保存用户信息
+          $app.getUserInfo(userInfo)
+  
+          const accountInfo = await $app.getAccountInfo()
+
+          if (accountInfo) {
+            this.updateUserWxInfo({
+              userId: accountInfo.userId,
+              userInfo: userInfo
+            })
+              .catch((res) => {
+                console.log('Update user Wx info error: %o', res.msg)
+                return false
+              })
+          }
         }
 
         this.$wxpage.triggerEvent('getUserInfo', res)

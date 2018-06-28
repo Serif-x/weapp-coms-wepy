@@ -1,9 +1,16 @@
 <style lang="scss">
-
+  @import "../style/utils/variables";
+  
+  page {
+    height: 100%;
+    color: $color-primary;
+  }
 </style>
 
 <template>
-  <view>Hello world!</view>
+  <view class="box-center-vertical">
+    <text>Hello world!</text>
+  </view>
 </template>
 
 <script>
@@ -26,8 +33,18 @@
       //
     }
 
-    onLoad () {
-      //
+    async onLoad (options) {
+      // this.$parent => App
+      const account = await this.$parent.getAccountInfo()
+
+      this.pageInit(options, account)
     }
+
+    /* region Page global methods */
+    pageInit (options, accountInfo) {
+      console.log('Page init with options: %o', options)
+      console.log('Page init with account: %o', accountInfo)
+    }
+    /* endregion Methods */
   }
 </script>

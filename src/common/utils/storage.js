@@ -6,7 +6,7 @@
  * Memory storage
  * @constructor
  */
-class MemoryStorage {
+export class MemoryStorage {
   constructor (...args) {
     this.store = new Map(args)
   }
@@ -53,7 +53,7 @@ class MemoryStorage {
   }
 }
 
-class LocalStorage {
+export class LocalStorage {
   // constructor () {}
 
   /**
@@ -127,9 +127,4 @@ class LocalStorage {
       })
     })
   }
-}
-
-export default {
-  LocalStorage,
-  MemoryStorage
 }

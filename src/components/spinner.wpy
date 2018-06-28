@@ -11,8 +11,6 @@
     width: rpx(160);
     overflow: hidden;
     margin: rpx(30) auto;
-    /*background-color: fade_out(#000, 0.8);*/
-    /*border-radius: rpx(10);*/
   
     .spinner-inner {
       position: relative;

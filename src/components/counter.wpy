@@ -1,0 +1,253 @@
+<style lang="scss">
+  @import "../style/utils/mixins";
+  @import "../style/components/icons";
+
+  :host {
+    @include borderBox();
+  }
+
+  .com-counter {
+    position: relative;
+    height: rpx(50);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    background-color: #fff;
+
+    @include borderBox();
+    @include with-border(#e6e6e6);
+
+    .counter-btn {
+      width: rpx(60);
+      height: 100%;
+      padding: 0 rpx(5);
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-size: rpx(30);
+      font-weight: 100;
+      line-height: 1;
+      background: none;
+      color: #D9D9D9;
+      border: none;
+      border-radius: 0;
+
+      &::after {
+        content: none;
+      }
+
+      @include with-border(#e6e6e6);
+    }
+    .counter-val {
+      position: relative;
+      z-index: 100;
+      width: rpx(80);
+      height: 100%;
+      min-height: 100%;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      background-color: #fff;
+
+      font-size: rpx(32);
+      line-height: 1;
+      border: none;
+      // border: rpx(1) solid #e6e6e6;
+
+      &::before {
+        content: '';
+        position: absolute;
+        z-index: 99;
+        left: 0;
+        top: 0;
+        width: 200%;
+        height: 200%;
+        border: solid #e6e6e6;
+        border-width: rpx(1) 0;
+        border-radius: 0;
+        transform: scale(0.5);
+        transform-origin: left top;
+      }
+    }
+
+    &.counter-large {
+      height: rpx(80);
+
+      .counter-btn {
+        width: rpx(80);
+        padding: 0 rpx(10);
+        font-size: rpx(38);
+      }
+      .counter-val {
+        width: rpx(120);
+      }
+    }
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+  }
+
+</style>
+<template>
+  <view class="com-counter {{size ? ('counter-' + size) : ''}} {{disabled ? 'disabled' : ''}}">
+    <button class="counter-btn" @tap="minus" disabled="{{value <= min}}"><text class="iconfont icon-minus"></text></button>
+    <input class="counter-val" type="number" value="{{value}}" disabled="{{disabled}}"
+           @input="input"
+           @blur="blur"/>
+    <button class="counter-btn" @tap="plus" disabled="{{max && value >= max}}"><text class="iconfont icon-plus"></text></button>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class Counter extends wepy.component {
+    components = {}
+
+    props = {
+      value: {
+        type: [Number, String],
+        default: 1
+      },
+      min: {
+        type: [Number, String],
+        default: 1
+      },
+      max: {
+        type: [Number, String],
+        default: null // 0 for No limit
+      },
+      size: {
+        type: String,
+        default: 'middle'
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      }
+    }
+
+    data = {
+      history: []
+    }
+
+    setValue (value, oldValue) {
+      let cur = ~~value
+
+      if (this.min !== null && cur < this.min) {
+        cur = this.min
+      } else if (this.max !== null && cur > this.max) {
+        cur = this.max
+      }
+
+      if (this.value !== cur) {
+        this.value = cur
+        this.$apply()
+        this.triggerChange(this.value, oldValue)
+      }
+
+      return this.value
+    }
+
+    init () {
+      if (this.min !== null) {
+        this.min = ~~this.min
+      }
+      if (this.max !== null) {
+        this.max = ~~this.max
+      }
+
+      let old = ~~this.value
+      let cur = this.setValue(old, old)
+
+      if (cur !== old) { // If no history added by setValue(), add it manually
+        this.pushHistory(old, null)
+      }
+
+      // console.log(this.history)
+
+      // this.$emit('init', cur, old)
+      this.$wxpage.triggerEvent('init', {cur, old, target: this})
+    }
+
+    undo () {
+      if (this.history.length <= 1) {
+        return
+      }
+
+      this.history.pop()
+      let history = this.history.pop()
+      console.warn('Counter undo %o', history)
+      return this.setValue(history.cur, history.old)
+    }
+
+    pushHistory (cur, old) {
+      this.history.push({cur, old})
+      // console.log(this.history)
+    }
+
+    triggerChange (cur, old) {
+      this.pushHistory(cur, old)
+
+      // this.$emit('change', cur, old)
+      this.$wxpage.triggerEvent('change', {cur, old, target: this})
+    }
+
+    methods = {
+      plus () {
+        let old = this.value
+        let cur = this.setValue(old + 1, old)
+        if (cur !== old) {
+          // this.$emit('plus', this.value, old)
+          this.$wxpage.triggerEvent('plus', {cur: this.value, old, target: this})
+        }
+      },
+
+      minus () {
+        let old = this.value
+        let cur = this.setValue(old - 1, old)
+        if (cur !== old) {
+          // this.$emit('mins', this.value, old)
+          this.$wxpage.triggerEvent('minus', {cur: this.value, old, target: this})
+        }
+      },
+
+      input (e) {
+        // console.log(e.detail.value)
+        let old = this.value
+        let cur = this.setValue(e.detail.value, old)
+
+        // this.$emit('input', cur, old)
+        this.$wxpage.triggerEvent('input', {cur, old, target: this})
+
+        return String(cur) // WeApp requires returning a String
+      },
+
+      blur (e) {
+        let old = this.value
+        let cur = this.setValue(e.detail.value, old)
+
+        // this.$emit('blur', cur, old)
+        this.$wxpage.triggerEvent('blur', {cur, old, target: this})
+
+        return String(cur)
+      },
+
+      undo () {
+        this.undo()
+      }
+    }
+
+    // events = {}
+
+    ready () {
+      this.init()
+    }
+  }
+</script>

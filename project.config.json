@@ -1,12 +1,14 @@
 {
-	"miniprogramRoot": "./src",
+	"miniprogramRoot": "./dist",
 	"compileType": "miniprogram",
 	"projectname": "weapp-native",
-  "setting": {
-    "urlCheck": true,
-    "es6": false,
-    "postcss": false,
-    "minified": false,
-    "newFeature": true
-  }
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"appid": "touristappid",
+	"condition": {}
 }
