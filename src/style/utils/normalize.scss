@@ -1,22 +1,29 @@
-// Normalize
-// ====================================================
+/*
+ * 小程序组件样式统一
+ */
 
-// Reset box
-//page, // Exclude page for iOS
+
+// 基础组件重置
+// ============================================================================
+
+// 视图容器
+
+// page, // 排除 page 组件样式 for iOS
 
 view,
 scroll-view,
-swiper,
-swiper-item,
-movable-view,
-movable-area,
-cover-view,
-cover-image,
+swiper, swiper-item,
+movable-view, movable-area,
+cover-view, cover-image,
+
+// 基础内容
 
 icon,
 text,
 rich-text,
 progress,
+
+// 表单组件
 
 button,
 checkbox,
@@ -24,26 +31,40 @@ form,
 input,
 label,
 picker,
-picker-view,
-radio,
+picker-view, picker-view-column,
+radio, radio-group,
 slider,
 switch,
 textarea,
 
+// 导航
+
 navigator,
+functional-page-navigator, /* v2.1.0+ */
+
+// 媒体组件
 
 audio,
 image,
 video,
 camera,
-live-player,
-live-pusher,
+live-player, /* v1.7.0+ */
+live-pusher, /* v1.7.0+ */
+
+// 地图
 
 map,
 
+// 画布
+
 canvas,
 
-web-view {
+// 开放能力
+
+open-data,
+web-view,
+ad /* v1.9.94+ */
+{
   &,
   &::after,
   &::before {
@@ -52,6 +73,10 @@ web-view {
   }
 }
 
+// 组件独立设置
+// ============================================================================
+
+/* region 视图容器 */
 page {
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
@@ -71,18 +96,41 @@ scroll-view {
   overflow-scrolling: touch;
 }
 
+movable-area {
+  position: relative;
+  height: auto;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+movable-view {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+}
+/* endregion 视图容器 */
+
+/* region 表单组件 */
+textarea {
+  display: block;
+  /*padding: .5em;*/
+  width: 100%;
+}
+
+rich-text {
+  display: block;
+}
+/* endregion 表单组件 */
+
+/* region 内联组件 */
 image {
   max-width: 100%;
   max-height: 100%;
   vertical-align: top;
-}
-
-navigator {
-  display: block;
-  height: auto;
-  width: auto;
-  max-height: 100%;
-  max-width: 100%;
 }
 
 text,
@@ -96,31 +144,15 @@ cover-image {
   display: inline-block;
   vertical-align: middle;
 }
+/* endregion 内联组件 */
 
-textarea {
+/* region 其他 */
+navigator {
   display: block;
-  /*padding: .5em;*/
-  width: 100%;
-}
-
-rich-text {
-  display: block;
-}
-
-movable-area {
-  position: relative;
   height: auto;
-  width: 100%;
-  min-width: 100%;
+  width: auto;
+  max-height: 100%;
   max-width: 100%;
-  overflow: hidden;
-}
-movable-view {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-width: 100%;
-  height: 100%;
 }
 
 .disabled,
@@ -128,3 +160,4 @@ movable-view {
   pointer-events: none;
   opacity: 0.75;
 }
+/* endregion 其他 */
