@@ -63,7 +63,7 @@
       const { code } = _loginRes
   
       if (!userInfo) {
-        userInfo = await getUserInfo()
+        userInfo = await getUserInfo().catch(() => null)
       }
   
       accountInfo = await API.login({ code, userInfo })
@@ -87,12 +87,12 @@
         'pages/index'
       ],
       debug: true
-    };
+    }
 
     globalData = {
       userInfo: null,
       accountInfo: null
-    };
+    }
 
     constructor () {
       super()
@@ -165,15 +165,21 @@
     }
   
     async getAccountInfo ({userInfo, retry = false} = {}) {
-      const isSessionValid = await checkSession().catch(() => false)
-  
-      if (isSessionValid && this._getAccountInfoPromise && !retry) {
-        return this._getAccountInfoPromise
+      if (!retry) {
+        if (this._getAccountInfoPromise) {
+          const _isSessionValid = await checkSession().catch(() => false)
+
+          if (_isSessionValid) {
+            return this._getAccountInfoPromise
+          }
+        }
       }
   
       this._getAccountInfoPromise = getAccountInfo(userInfo)
         .then(async (accountInfo) => {
           if (!accountInfo) {
+            // Set promise to null, make it try again when account info is null
+            this._getAccountInfoPromise = null
             return null
           }
   
@@ -184,6 +190,14 @@
           signAPI({ userId })
   
           return accountInfo
+        })
+        .catch((res) => {
+          console.warn(res)
+
+          // Set promise to null, make it try again when account info is null
+          this._getAccountInfoPromise = null
+
+          return null
         })
   
       return this._getAccountInfoPromise
