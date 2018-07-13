@@ -10,7 +10,7 @@
   import wxTip from './common/utils/wxTip'
   import API, { sign as signAPI } from './api/api'
 
-  const checkSession = async () => {
+  const checkSession = () => {
     return new Promise((resolve) => {
       wx.checkSession({
         success () {
