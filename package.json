@@ -16,7 +16,7 @@
   "dependencies": {
     "promise-polyfill": "^7.1.0",
     "promise.prototype.finally": "^3.1.0",
-    "wepy": "^1.7.2-alpha1",
+    "wepy": "^1.7.2",
     "wepy-async-function": "^1.4.6"
   },
   "devDependencies": {
