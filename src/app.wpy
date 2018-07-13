@@ -55,11 +55,12 @@
       }
   
       const _loginRes = await wepy.login().catch(() => null)
-  
+
       if (!_loginRes) {
         return null
       }
-  
+
+      console.info('On Wx login: %o', _loginRes)
       const { code } = _loginRes
   
       if (!userInfo) {
@@ -79,19 +80,18 @@
       window: {
         backgroundTextStyle: 'dark',
         navigationBarBackgroundColor: '#D92A21',
-        navigationBarTitleText: '小程序基础设施',
+        navigationBarTitleText: '开心满屋',
         navigationBarTextStyle: 'white'
         // navigationStyle: 'custom',
       },
       pages: [
         'pages/index'
       ],
-      debug: true
+      debug: false
     }
 
     globalData = {
-      userInfo: null,
-      accountInfo: null
+      //
     }
 
     constructor () {
@@ -103,7 +103,7 @@
     /* region Life cycle */
     async onLaunch (option) {
       // APP 初始化
-      this.appInit()
+      this.appInit(option)
 
       // 获取账户信息
       const accountInfo = await this.getAccountInfo()
@@ -123,7 +123,9 @@
 
     /* region Methods */
 
-    async appInit () {
+    async appInit (option) {
+      console.info('App init with options: %o', option)
+
       // 关闭调试
       wx.setEnableDebug({ enableDebug: false })
 
@@ -152,7 +154,7 @@
     }
 
     async accountInit (accountInfo) {
-      console.log('App initial account info: %o', accountInfo)
+      console.info('App init with account: %o', accountInfo)
     }
 
     /* region 账户信息 */
