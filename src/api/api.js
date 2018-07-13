@@ -2,7 +2,9 @@ import request, { requestSign } from '../common/utils/request'
 
 export { requestSign }
 
-export const API_HOST = 'http://192.168.2.150:9005'
+export const HOST = 'http://192.168.2.150:8086'
+
+export const API_HOST = `${HOST}/api`
 
 const API = {
   // 登录
