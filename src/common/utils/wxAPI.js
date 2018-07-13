@@ -2,6 +2,34 @@ import wepy from 'wepy'
 import utils from './utils'
 import wxTip from './wxTip'
 
+const promisify = (nativeAPI) => (options) => (
+  new Promise((resolve, reject) => {
+    const opts = Object.assign({}, options || {})
+
+    const _success = opts.success
+    const _fail = opts.fail
+
+    delete opts.success
+    delete opts.fail
+
+    if (typeof nativeAPI !== 'function') {
+      return reject(Object.create(null, { errMsg: { value: 'Not a function' } }))
+    }
+
+    nativeAPI({
+      ...opts,
+      success (res) {
+        _success && _success(res)
+        resolve(res)
+      },
+      fail (res) {
+        _fail && _fail(res)
+        reject(res)
+      }
+    })
+  })
+)
+
 export default class WxAPI {
   /* region APP/页面 */
   static getPageUrl (page) {
@@ -170,6 +198,23 @@ export default class WxAPI {
   /* endregion 组件 */
 
   /* region 开放接口 */
+  static checkSession () {
+    return new Promise((resolve) => {
+      wx.checkSession({
+        success () {
+          resolve(true)
+        },
+        fail () {
+          resolve(false)
+        }
+      })
+    })
+  }
+
+  static login = promisify(wx.login)
+
+  static getUserInfo = promisify(wx.getUserInfo)
+
   static requestPayment (options = {}) {
     return new Promise((resolve, reject) => {
       let isPaySuccess = false

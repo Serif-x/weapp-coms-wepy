@@ -10,7 +10,7 @@ const SIGN_DATA = {}
  * @param {Object} data
  * @returns {Object}
  */
-export function sign (data) {
+export function requestSign (data) {
   return Object.assign(SIGN_DATA, data)
 }
 

@@ -1,79 +1,18 @@
 <style lang="scss" src="style/index.scss"></style>
 
 <script>
+  /* region Import */
   import wepy from 'wepy'
   import 'promise-polyfill'
   import 'wepy-async-function'
   import { shim } from 'promise.prototype.finally'
   shim()
-  
+
   import wxTip from './common/utils/wxTip'
-  import API, { sign as signAPI } from './api/api'
-
-  const checkSession = () => {
-    return new Promise((resolve) => {
-      wx.checkSession({
-        success () {
-          console.info('Wx session is valid')
-          resolve(true)
-        },
-        fail () {
-          console.warn('Wx session is expired')
-          resolve(false)
-        }
-      })
-    })
-  }
-  
-  const getUserInfo = (function () {
-    let userInfo = null
-
-    return async function (outUserInfo) {
-      if (outUserInfo) {
-        userInfo = outUserInfo
-        return userInfo
-      }
-
-      if (userInfo) {
-        return userInfo
-      }
-  
-      userInfo = await wepy.getUserInfo()
-        .then(res => res.userInfo)
-        .catch(() => null)
-
-      return userInfo
-    }
-  }())
-  
-  const getAccountInfo = (function () {
-    let accountInfo = null
-
-    return async function (userInfo) {
-      if (accountInfo) {
-        return accountInfo
-      }
-  
-      const _loginRes = await wepy.login().catch(() => null)
-
-      if (!_loginRes) {
-        return null
-      }
-
-      console.info('On Wx login: %o', _loginRes)
-      const { code } = _loginRes
-  
-      if (!userInfo) {
-        userInfo = await getUserInfo().catch(() => null)
-      }
-  
-      accountInfo = await API.login({ code, userInfo })
-        .then(res => res.data)
-        .catch(() => null)
-  
-      return accountInfo
-    }
-  }())
+  import wxAPI from './common/utils/wxAPI'
+  import service from './common/service'
+  import { requestSign } from './api/api'
+  /* endregion Import */
 
   export default class extends wepy.app {
     config = {
@@ -100,7 +39,7 @@
       this.use('requestfix')
     }
 
-    /* region Life cycle */
+    /* region App life cycle */
     async onLaunch (option) {
       // APP 初始化
       this.appInit(option)
@@ -121,7 +60,7 @@
     }
     /* endregion Life cycle */
 
-    /* region Methods */
+    /* region App global methods */
 
     async appInit (option) {
       console.info('App init with options: %o', option)
@@ -159,7 +98,7 @@
 
     /* region 账户信息 */
     async getUserInfo () {
-      return getUserInfo()
+      return service.getUserInfo()
         .then((res) => {
           console.info('User info: %o', res)
           return res
@@ -169,7 +108,7 @@
     async getAccountInfo ({userInfo, retry = false} = {}) {
       if (!retry) {
         if (this._getAccountInfoPromise) {
-          const _isSessionValid = await checkSession().catch(() => false)
+          const _isSessionValid = await wxAPI.checkSession().catch(() => false)
 
           if (_isSessionValid) {
             return this._getAccountInfoPromise
@@ -177,7 +116,7 @@
         }
       }
   
-      this._getAccountInfoPromise = getAccountInfo(userInfo)
+      this._getAccountInfoPromise = service.getAccountInfo(userInfo)
         .then(async (accountInfo) => {
           if (!accountInfo) {
             // Set promise to null, make it try again when account info is null
@@ -189,7 +128,7 @@
           const { userId } = accountInfo
   
           // Sign API request
-          signAPI({ userId })
+          requestSign({ userId })
   
           return accountInfo
         })

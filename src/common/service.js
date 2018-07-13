@@ -13,6 +13,58 @@ const getPaymentErrorMsg = (errMsg) => {
   return errMsg
 }
 
+const getUserInfo = (function () {
+  let userInfo = null
+
+  return async function (outUserInfo) {
+    if (outUserInfo) {
+      userInfo = outUserInfo
+      return userInfo
+    }
+
+    if (userInfo) {
+      return userInfo
+    }
+
+    userInfo = await wxAPI.getUserInfo()
+      .then(res => res.userInfo)
+      .catch(() => null)
+
+    console.info('On Wx getUserInfo: %o', userInfo)
+
+    return userInfo
+  }
+}())
+
+const getAccountInfo = (function () {
+  let accountInfo = null
+
+  return async function (userInfo) {
+    if (accountInfo) {
+      return accountInfo
+    }
+
+    const _loginRes = await wxAPI.login().catch(() => null)
+
+    if (!_loginRes) {
+      return null
+    }
+
+    console.info('On Wx login: %o', _loginRes)
+    const { code } = _loginRes
+
+    if (!userInfo) {
+      userInfo = await getUserInfo().catch(() => null)
+    }
+
+    accountInfo = await API.login({ code, userInfo })
+      .then(res => res.data)
+      .catch(() => null)
+
+    return accountInfo
+  }
+}())
+
 export default class Service {
   static wechatPay (params) {
     wxTip.loading('等待支付...')
@@ -38,4 +90,8 @@ export default class Service {
         return res
       })
   }
+
+  static getUserInfo = getUserInfo
+
+  static getAccountInfo = getAccountInfo
 }

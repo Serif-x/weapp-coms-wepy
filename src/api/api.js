@@ -1,6 +1,6 @@
-import request, { sign } from '../common/utils/request'
+import request, { requestSign } from '../common/utils/request'
 
-export { sign }
+export { requestSign }
 
 export const API_HOST = 'http://192.168.2.150:9005'
 
